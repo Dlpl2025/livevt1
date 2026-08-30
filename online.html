@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline & Online Video Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { width: 100%; max-width: 900px; background: #1e293b; border-radius: 12px; padding: 24px; }
+    h1 { font-size: 1.5rem; margin-bottom: 20px; text-align: center; color: #38bdf8; }
+    .input-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .input-group { display: flex; gap: 10px; }
+    input[type="url"], input[type="file"] { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #334155; background-color: #0f172a; color: #fff; }
+    button { padding: 10px 20px; background-color: #0284c7; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button:hover { background-color: #0369a1; }
+    .video-container { position: relative; width: 100%; background-color: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+    video { width: 100%; height: 100%; display: none; transition: transform 0.3s ease; }
+    .placeholder { color: #64748b; }
+    .controls-toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding: 14px; background: #0f172a; border-radius: 8px; justify-content: space-around; }
+    .control-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #94a3b8; }
+    select, .btn-action { background-color: #1e293b; color: #f8fafc; border: 1px solid #334155; padding: 6px 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="https://dlpl2025.github.io/livevt1/">Online Video Player</a>
+    
+    <div class="input-section">
+      <!-- Option A: Direct URL -->
+      <div class="input-group">
+        <input type="url" id="videoUrl" placeholder="Paste Direct Streaming URL (.mp4 / .m3u8)">
+        <button onclick="loadFromUrl()">Play URL</button>
+      </div>
+
+      <!-- Option B: Select Downloaded File -->
+      <div class="input-group">
+        <input type="file" id="fileInput" accept="video/*" onchange="loadFromFile()">
+      </div>
+    </div>
+
+    <div class="video-container">
+      <div id="placeholder" class="placeholder">Select a local file or paste a direct stream URL</div>
+      <video id="videoPlayer" controls autoplay></video>
+    </div>
+
+
+      <div class="control-item">
+        <label>⚡ Speed:</label>
+        <select id="speedSelect" onchange="changeSpeed()">
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2.0x</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const player = document.getElementById('videoPlayer');
+    const placeholder = document.getElementById('placeholder');
+    const rotAngleText = document.getElementById('rotAngle');
+    let currentRotation = 0;
+
+    function activatePlayer(srcUrl) {
+      placeholder.style.display = 'none';
+      player.style.display = 'block';
+      player.src = srcUrl;
+      player.play().catch(e => console.warn(e));
+    }
+
+    function loadFromUrl() {
+      const url = document.getElementById('videoUrl').value.trim();
+      if (!url) return;
+      activatePlayer(url);
+    }
+
+    function loadFromFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return;
+      const objectUrl = URL.createObjectURL(file);
+      activatePlayer(objectUrl);
+    }
+
+    function rotateVideo() {
+      currentRotation = (currentRotation + 90) % 360;
+      rotAngleText.textContent = `${currentRotation}°`;
+      player.style.transform = (currentRotation === 90 || currentRotation === 270)
+        ? `rotate(${currentRotation}deg) scale(0.56)`
+        : `rotate(${currentRotation}deg) scale(1)`;
+    }
+
+    function changeSpeed() {
+      player.playbackRate = parseFloat(document.getElementById('speedSelect').value);
+    }
+  </script>
+</body>
+</html>
