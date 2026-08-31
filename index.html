@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Live TV Player</title>
+  <title>Live VT Player</title>
   <!-- Hls.js library to handle m3u8 playback -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
@@ -30,7 +30,7 @@
       overflow-x: hidden;
     }
 
-    /* Fixed Red Header for both Mobile and Web */
+    /* Fixed Red Header with Centered Logo */
     header {
       position: fixed;
       top: 0;
@@ -38,19 +38,20 @@
       width: 100%;
       height: var(--header-height);
       background-color: var(--primary-red);
-      color: white;
-      padding: 0 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       z-index: 50;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      padding: 0 16px;
     }
 
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+    .header-logo {
+      height: 38px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      border-radius: 4px;
     }
 
     /* Scrollable Main Content Area */
@@ -253,9 +254,9 @@
 </head>
 <body>
 
-  <!-- Fixed Red Header -->
+  <!-- Fixed Red Header with LIVE VT Centered Logo -->
   <header>
-    <div class="logo">LiveTV</div>
+    <img class="header-logo" src="logo.png" alt="LIVE VT Logo" />
   </header>
 
   <!-- Scrollable Channel Grid Area -->
@@ -294,7 +295,7 @@
   </div>
 
   <script>
-    // Channel Data List with designated image links
+    // Channel Data List
     const channels = [
       { 
         name: "Travel Xp", 
@@ -533,6 +534,7 @@
           video.play().catch(() => {});
         });
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Native Safari/iOS support
         video.src = channel.url;
         video.addEventListener("loadedmetadata", () => {
           video.play().catch(() => {});
